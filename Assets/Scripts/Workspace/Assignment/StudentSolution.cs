@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Assignment
 {
@@ -19,16 +18,12 @@ namespace Assignment
             Stack<int> stack = new Stack<int>();
             stack.Push(1);
             stack.Push(2);
-            stack.Push(3);
+            stack.Push(3); // top
 
-            int count = stack.Count;
-            Debug.Log($"Stack Count: {count}");
-            int popped = stack.Pop();
-            Debug.Log($"Popped: {popped}");
-            int peek = stack.Peek();
-            Debug.Log($"Peek: {peek}");
-            int countAfterPeek = stack.Count;
-            Debug.Log($"CountAfterPeek: {countAfterPeek}");
+            int count = stack.Count; // 3
+            int popped = stack.Pop(); // popped = 3
+            int peek = stack.Peek(); // peek = 2
+            int countAfterPeek = stack.Count; // countAfterPeek = 2
 
             return (count, popped, peek, countAfterPeek);
         }
@@ -41,13 +36,10 @@ namespace Assignment
             queue.Enqueue(3);
 
             int count = queue.Count;
-            Debug.Log($"Queue Count: {count}");
             int dequeued = queue.Dequeue();
-            Debug.Log($"Dequeued: {dequeued}");
             int peek = queue.Peek();
-            Debug.Log($"Peek: {peek}");
             int countAfterPeek = queue.Count;
-            Debug.Log($"CountAfterPeek: {countAfterPeek}");
+
             return (count, dequeued, peek, countAfterPeek);
         }
 
@@ -62,14 +54,16 @@ namespace Assignment
             stack.Push(action2);
             stack.Push(action3);
 
-            string[] poppedName = new string[stack.Count];
-            for (int i = 0; i < poppedName.Length; i++)
+            int c = stack.Count;
+            List<string> actions = new List<string>();
+            for (int i = 0; i < c; i++)
             {
-                var popped = stack.Pop();
-                poppedName[i] = popped.Name;
-                Debug.Log($"Popped: {poppedName[i]}");
+                var action = stack.Pop();
+                actions.Add(action.Name);
             }
-            return poppedName;
+
+            // actions => action3, action2, action1
+            return actions.ToArray();
         }
 
         public string[] LCT04_ActionQueue()
@@ -78,19 +72,21 @@ namespace Assignment
             Action action2 = new Action { Name = "Action 2" };
             Action action3 = new Action { Name = "Action 3" };
 
-            Queue<Action> actionQueue = new Queue<Action>();
-            actionQueue.Enqueue(action1);
-            actionQueue.Enqueue(action2);
-            actionQueue.Enqueue(action3);
+            Queue<Action> queue = new Queue<Action>();
+            queue.Enqueue(action1);
+            queue.Enqueue(action2);
+            queue.Enqueue(action3);
 
-            string[] dequeuedName = new string[actionQueue.Count];
-            for (int i = 0; i < dequeuedName.Length; i++)
+            int c = queue.Count;
+            List<string> actions = new List<string>();
+            for (int i = 0; i < c; i++)
             {
-                var dequeue = actionQueue.Dequeue();
-                dequeuedName[i] = dequeue.Name;
-                Debug.Log($"Dequeued: {dequeuedName[i]}");
+                var a = queue.Dequeue();
+                actions.Add(a.Name);
             }
-            return dequeuedName;
+
+            // actions => action1, action2, action3
+            return actions.ToArray();
         }
 
         #endregion
@@ -99,25 +95,36 @@ namespace Assignment
 
         public string ASN01_ReverseString(string str)
         {
-            if (str == null) return "";
-            Stack<char> stack = new Stack<char>();
+            Stack<char> chars = new Stack<char>();
             foreach (char c in str)
             {
-                stack.Push(c);
+                chars.Push(c);
             }
-            string result = "";
-            while (stack.Count > 0)
+
+            char[] reversedChars = new char[str.Length];
+            for (int i = 0; i < reversedChars.Length; i++)
             {
-                result += stack.Pop();
+                reversedChars[i] = chars.Pop();
             }
-            return result;
+            return new string(reversedChars);
         }
 
         public bool ASN02_StackPalindrome(string str)
         {
-            if (str == null) return false;
-            string reversed = ASN01_ReverseString(str);
-            return str == reversed;
+            Stack<char> chars = new Stack<char>();
+            foreach (char c in str)
+            {
+                chars.Push(c);
+            }
+
+            foreach (char c in str)
+            {
+                if (c != chars.Pop())
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         #endregion
@@ -126,7 +133,6 @@ namespace Assignment
 
         public bool EX01_ParenthesesChecker(string str)
         {
-            if (str == null) return false;
             Stack<char> stack = new Stack<char>();
             foreach (char c in str)
             {
@@ -136,14 +142,11 @@ namespace Assignment
                 }
                 else if (c == ')' || c == ']' || c == '}')
                 {
-                    if (stack.Count == 0)
-                    {
-                        return false;
-                    }
-                    char open = stack.Pop();
-                    if ((c == ')' && open != '(') ||
-                        (c == ']' && open != '[') ||
-                        (c == '}' && open != '{'))
+                    if (stack.Count == 0) return false;
+                    char top = stack.Pop();
+                    if ((c == ')' && top != '(') ||
+                        (c == ']' && top != '[') ||
+                        (c == '}' && top != '{'))
                     {
                         return false;
                     }
